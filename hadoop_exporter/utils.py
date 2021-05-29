@@ -211,7 +211,7 @@ def parse_args():
         '-addr',
         dest='address',
         required=False,
-        help='Polling server on this address. (default "127.0.0.1")',
+        help='Polling server on this address. (default "0.0.0.0")',
         default=None
     )
     parser.add_argument(

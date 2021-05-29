@@ -23,7 +23,7 @@ from hadoop_exporter import \
 logger = utils.get_logger(__name__)
 
 EXPORTER_CLUSTER_NAME_DEFAULT = 'hadoop_cluster'
-EXPORTER_ADDRESS_DEFAULT = '127.0.0.1'
+EXPORTER_ADDRESS_DEFAULT = '0.0.0.0'
 EXPORTER_PORT_DEFAULT = 9123
 EXPORTER_PATH_DEFAULT = '/metrics'
 EXPORTER_PERIOD_DEFAULT=10
