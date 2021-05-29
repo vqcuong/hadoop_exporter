@@ -247,12 +247,18 @@ class Exporter:
             f"Exporter start listening on http://{self.address}:{self.port}")
 
     def register_prometheus(self):
+        self.logging_threshold = 30 #seconds
+        counter = self.logging_threshold
         try:
             while True:
                 for service in self.sevices:
                     service.register()
-                logger.info(f"Continue scaping metrics each {self.period}s...")
+                if counter >= self.logging_threshold:
+                    logger.info(f"Continue scaping metrics each {self.period}s...")
+                    counter = 0
+                counter += 1
                 time.sleep(self.period)
+
         except KeyboardInterrupt:
             logger.info("Interrupted")
             exit(0)
