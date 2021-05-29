@@ -4,7 +4,7 @@
 import os
 import socket
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
 import requests
 import logging
 import yaml
@@ -98,11 +98,12 @@ def get_hostname():
         return host
 
 
-def read_yaml_file(file) -> Dict:
-    with open(file, 'r') as f:
-        cfg = yaml.safe_load(f)
-    return cfg
-
+def read_yaml_file(file) -> Optional[Dict]:
+    if os.path.exists(file):
+        with open(file, 'r') as f:
+            cfg = yaml.safe_load(f)
+        return cfg
+    return None
 
 def parse_args():
     parser = argparse.ArgumentParser(

@@ -39,8 +39,9 @@ class MetricCollector(object):
         cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, component, f"{service}.yaml"))
         common_cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, 'common.yaml'))
 
-        self._rules = cfg["rules"]
-        self._rules.update(common_cfg["rules"])
+        self._rules = cfg.get("rules", {}) if cfg is not None else {}
+        if common_cfg is not None:
+            self._rules.update(common_cfg.get("rules", {}))
         self._lower_name = cfg.get("lowercaseOutputName", True)
         self._lower_label = cfg.get("lowercaseOutputLabelNames", True)
         self._common_labels = {"names": [], "values": []}
