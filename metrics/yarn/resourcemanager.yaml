@@ -1,5 +1,5 @@
 lowercaseOutputName: true
-lowercaseOutputLabelNames: false
+lowercaseOutputLabel: false
 rules:
   Hadoop:service=ResourceManager,name=(QueueMetrics),q0=(\w+)$:
     - pattern: ^(running)_(\d+)$

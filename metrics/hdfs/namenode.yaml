@@ -1,6 +1,6 @@
 # Reference: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Metrics.html
 lowercaseOutputName: true
-lowercaseOutputLabelNames: false
+lowercaseOutputLabel: false
 rules:
   Hadoop:service=NameNode,name=(NameNodeInfo)$:
     - pattern: ^(Total|Used|Free|NonDfsUsedSpace|Percent.+|Cache.+|CorruptFilesCount|Threads)$

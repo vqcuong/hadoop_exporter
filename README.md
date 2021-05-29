@@ -20,34 +20,35 @@ usage: service.py [-h] [-cfg CONFIG] [-c CLUSTER_NAME] [-nn NAMENODE_JMX]
                   [-hllap HIVELLAP_JMX] [-ad AUTO_DISCOVERY]
                   [-adw DISCOVERY_WHITELIST] [-addr ADDRESS] [-p PORT]
                   [--path PATH] [--period PERIOD]
+
 hadoop node exporter args, including url, metrics_path, address, port and
 cluster.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -cfg CONFIG           Exporter config file (defautl: None)
+  -cfg CONFIG           Exporter config file (defautl: /exporter/config.yaml)
   -c CLUSTER_NAME       Hadoop cluster labels. (default "hadoop_cluster")
-  -nn NAMENODE_JMX      Hadoop hdfs metrics URL. (example
+  -nn NAMENODE_JMX      List of HDFS namenode JMX url. (example
                         "http://localhost:9870/jmx")
-  -dn DATANODE_JMX      Hadoop datanode metrics URL. (example
+  -dn DATANODE_JMX      List of HDFS datanode JMX url. (example
                         "http://localhost:9864/jmx")
-  -jn JOURNALNODE_JMX   Hadoop journalnode metrics URL. (example
+  -jn JOURNALNODE_JMX   List of HDFS journalnode JMX url. (example
                         "http://localhost:8480/jmx")
   -rm RESOURCEMANAGER_JMX
-                        Hadoop resourcemanager metrics URL. (example
+                        List of YARN resourcemanager JMX url. (example
                         "http://localhost:8088/jmx")
-  -nm NODEMANAGER_JMX   Hadoop nodemanager metrics URL. (example
+  -nm NODEMANAGER_JMX   List of YARN nodemanager JMX url. (example
                         "http://localhost:8042/jmx")
   -mrjh MAPRED_JOBHISTORY_JMX
-                        Hadoop mapred history metrics URL. (example
+                        List of Mapreduce jobhistory JMX url. (example
                         "http://localhost:19888/jmx")
-  -hm HMASTER_JMX       HBase masterserver metrics URL. (example
+  -hm HMASTER_JMX       List of HBase master JMX url. (example
                         "http://localhost:16010/jmx")
-  -hr HREGION_JMX       HBase regionserver metrics URL. (example
+  -hr HREGION_JMX       List of HBase regionserver JMX url. (example
                         "http://localhost:16030/jmx")
-  -hs2 HIVESERVER2_JMX  hive metrics URL. (example
+  -hs2 HIVESERVER2_JMX  List of HiveServer2 JMX url. (example
                         "http://localhost:10002/jmx")
-  -hllap HIVELLAP_JMX   Hadoop llap metrics URL. (example
+  -hllap HIVELLAP_JMX   List of Hive LLAP JMX url. (example
                         "http://localhost:15002/jmx")
   -ad AUTO_DISCOVERY    Enable auto discovery if set true else false. (example
                         "--auto true") (default: false)
@@ -58,7 +59,7 @@ optional arguments:
   -p PORT               Listen to this port. (default "9123")
   --path PATH           Path under which to expose metrics. (default
                         "/metrics")
-  --period PERIOD       Period (seconds) to consume jmx service. (default: 30)
+  --period PERIOD       Period (seconds) to consume jmx service. (default: 10)
 ```
 
 You can use config file (yaml format) to replace commandline args. Example of config.yaml:
@@ -70,16 +71,25 @@ server:
 
 # list of jmx service to scape metrics
 jmx:
-  - cluster: hadoop_cluster
+  - cluster: hdfs_cluster
     component: hdfs
-    service: namenode
-    url: http://localhost:9870/jmx
+    services:
+      namenode:
+        - http://nn1:9870/jmx
+      datanode:
+        - http://dn1:9864/jmx
+        - http://dn2:9864/jmx
+        - http://dn3:9864/jmx
 
-  - cluster: hadoop_cluster
+  - cluster: yarn_cluster
     component: yarn
-    service: resourcemanager
-    url: http://localhost:8088/jmx
-
+    services:
+      resourcemanager:
+        - http://rm1:9870/jmx
+      nodemanager:
+        - http://nm1:9864/jmx
+        - http://nm2:9864/jmx
+        - http://nm3:9864/jmx
 ```
 
 Tested on Apache Hadoop 2.7.3, 3.3.0

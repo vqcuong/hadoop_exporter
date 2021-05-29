@@ -5,7 +5,7 @@ from logging import Logger
 import os
 import re
 import traceback
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, Union
 from prometheus_client.core import GaugeMetricFamily
 from hadoop_exporter import utils
 
@@ -18,21 +18,20 @@ class MetricCollector(object):
     '''
     NON_METRIC_NAMES = ["name", "modelerType", "Name", "ObjectName"]
 
-    def __init__(self, cluster, url, component, service, logger: Logger = None):
+    def __init__(self, cluster: str, urls: Union[str, List[str]], component: str, service: str, logger: Logger = None):
         '''
         @param cluster: Cluster name, registered in the config file or ran in the command-line.
-        @param url: All metrics are scraped in the url, corresponding to each component. 
-                    e.g. "hdfs" metrics can be scraped in http://ip:50070/jmx.
-                         "resourcemanager" metrics can be scraped in http://ip:8088/jmx.
-        @param component: Component name. e.g. "hdfs", "resourcemanager", "mapred", "hive", "hbase".
-        @param service: Service name. e.g. "namenode", "resourcemanager", "hiveserver2".
+        @param urls: List of JMX url of each unique serivce corresponding to each component 
+                    e.g. hdfs namenode metrics can be scraped in list: [http://namenode1:9870/jmx. http://namenode2:9870/jmx]
+        @param component: Component name. e.g. "hdfs", "resourcemanager"
+        @param service: Service name. e.g. "namenode", "datanode", "resourcemanager", "nodemanager"
         '''
 
         self._logger = logger or utils.get_logger()
         self._cluster = cluster
         self._component = component
         self._service = service
-        self._url = url.rstrip('/')
+        self._urls = list(map(lambda url: url.rstrip('/'), urls.split(",") if isinstance(urls, str) else urls))
         self._prefix = 'hadoop_{0}_{1}'.format(component, service)
 
         cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, component, f"{service}.yaml"))
@@ -42,42 +41,47 @@ class MetricCollector(object):
         if common_cfg is not None:
             self._rules.update(common_cfg.get("rules", {}))
         self._lower_name = cfg.get("lowercaseOutputName", True)
-        self._lower_label = cfg.get("lowercaseOutputLabelNames", True)
-        self._common_labels = {"names": [], "values": []}
-        self._first_get_common_labels = True
+        self._lower_label = cfg.get("lowercaseOutputLabel", True)
+        self._common_labels = {}
+        self._first_get_common_labels = {}
+        for url in self._urls:
+            self._first_get_common_labels[url] = True
         self._metrics = {}
 
 
     def collect(self):
-        try:
-            beans = utils.get_metrics(self._url)
-        except:
-            self._logger.info(
-                "Can't scrape metrics from url: {0}".format(self._url))
-            pass
-        else:
-            if self._first_get_common_labels:
-                self._get_common_labels(beans)
-            self._convert_metrics(beans)
-            for group_metrics in self._metrics.values():
-                for metric in group_metrics.values():
-                    yield metric
+        for group_pattern in self._rules:
+            self._metrics[group_pattern] = {}
+        for url in self._urls:
+            try:
+                beans = utils.get_metrics(url)
+            except:
+                self._logger.info(
+                    "Can't scrape metrics from url: {0}".format(url))
+                pass
+            else:
+                if self._first_get_common_labels[url]:
+                    self._common_labels[url] = {"names": [], "values": []} 
+                    self._get_common_labels(beans, url)
+            self._convert_metrics(beans, url)
+
+        for group_metrics in self._metrics.values():
+            for metric in group_metrics.values():
+                yield metric
 
 
-    def _get_common_labels(self, beans: List[Dict]):
-        self._first_get_common_labels = False
-        self._common_labels["names"].append("cluster")
-        self._common_labels["values"].append(self._cluster)
+    def _get_common_labels(self, beans: List[Dict], url: str):
+        self._first_get_common_labels[url] = False
+        self._common_labels[url]["names"].append("cluster")
+        self._common_labels[url]["values"].append(self._cluster)
 
         bean = self._find_bean(beans, "Hadoop:service=.*,name=(JvmMetrics)$")
         if bean:
-            self._common_labels["names"].append("hostname")
-            self._common_labels["values"].append(bean["tag.Hostname"])
+            self._common_labels[url]["names"].append("hostname")
+            self._common_labels[url]["values"].append(bean["tag.Hostname"])
 
 
-    def _convert_metrics(self, beans: List[Dict]):
-        for group_pattern in self._rules:
-            self._metrics[group_pattern] = {}
+    def _convert_metrics(self, beans: List[Dict], url: str):
         # loop for each group metric
         for bean in beans:
             for group_pattern in self._rules:
@@ -102,7 +106,7 @@ class MetricCollector(object):
                             if metric_identifier not in self._metrics[group_pattern]:
                                 name = "_".join([self._prefix, sub_name])
                                 if self._lower_name: name = name.lower()
-                                label_names = self._common_labels["names"] + sub_label_names
+                                label_names = self._common_labels[url]["names"] + sub_label_names
                                 if self._lower_label: label_names = [label.lower() for label in label_names]
                                 docs = name if "help" not in metric_def \
                                     else pattern.sub(metric_def["help"].replace("$", "\\"), concat_str)
@@ -115,7 +119,7 @@ class MetricCollector(object):
                                     self._metrics[group_pattern][metric_identifier] = metric
 
                             if metric_identifier in self._metrics[group_pattern]:
-                                label_values = self._common_labels["values"] + [pattern.sub(label.replace("$", "\\"), concat_str)
+                                label_values = self._common_labels[url]["values"] + [pattern.sub(label.replace("$", "\\"), concat_str)
                                     for label in metric_def["labels"].values()]
                                 resolved_value = self._resolve_value(value, metric_def.get("mapping", None))
                                 self._metrics[group_pattern][metric_identifier].add_metric(label_values, resolved_value)

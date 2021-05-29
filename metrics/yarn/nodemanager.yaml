@@ -1,3 +1,5 @@
+lowercaseOutputName: true
+lowercaseOutputLabel: false
 rules:
   Hadoop:service=NodeManager,name=(NodeManagerMetrics)$:
     - pattern: ^(Containers)(\w+)$

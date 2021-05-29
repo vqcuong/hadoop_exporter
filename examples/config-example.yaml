@@ -5,12 +5,22 @@ server:
 
 # list of jmx service to scape metrics
 jmx:
-  - cluster: hadoop_cluster
+  - cluster: hdfs_cluster
     component: hdfs
-    service: namenode
-    url: http://localhost:9870/jmx
+    services:
+      namenode:
+        - http://nn1:9870/jmx
+      datanode:
+        - http://dn1:9864/jmx
+        - http://dn2:9864/jmx
+        - http://dn3:9864/jmx
 
-  - cluster: hadoop_cluster
+  - cluster: yarn_cluster
     component: yarn
-    service: resourcemanager
-    url: http://localhost:8088/jmx
+    services:
+      resourcemanager:
+        - http://rm1:9870/jmx
+      nodemanager:
+        - http://nm1:9864/jmx
+        - http://nm2:9864/jmx
+        - http://nm3:9864/jmx

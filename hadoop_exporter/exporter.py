@@ -1,7 +1,8 @@
 import os
+from re import split
 import time
 import traceback
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Union
 from prometheus_client.core import REGISTRY
 from prometheus_client import start_http_server
 import yaml
@@ -25,7 +26,7 @@ EXPORTER_CLUSTER_NAME_DEFAULT = 'hadoop_cluster'
 EXPORTER_ADDRESS_DEFAULT = '127.0.0.1'
 EXPORTER_PORT_DEFAULT = 9123
 EXPORTER_PATH_DEFAULT = '/metrics'
-EXPORTER_PERIOD_DEFAULT=30
+EXPORTER_PERIOD_DEFAULT=10
 EXPORTER_CONFIG_DEFAULT='/exporter/config.yaml'
 
 
@@ -57,9 +58,9 @@ class ExporterEnv:
 
 
 class Service:
-    def __init__(self, cluster: str, url: str, collector: Callable = MetricCollector, name: Optional[str] = None) -> None:
+    def __init__(self, cluster: str, urls: List[str], collector: Callable = MetricCollector, name: Optional[str] = None) -> None:
         self.collector = collector
-        self.url = url
+        self.urls = urls
         self.cluster = cluster
         self.flag = True
         self.name = name
@@ -67,14 +68,14 @@ class Service:
     def register(self):
         if self.flag:
             logger.info("register new {} listen from {}".format(
-                self.collector.__name__, self.url))
+                self.collector.__name__, self.urls))
             REGISTRY.register(self.collector(
-                cluster=self.cluster, url=self.url))
+                cluster=self.cluster, urls=self.urls))
             self.flag = not self.flag
 
     def __str__(self) -> str:
         return "(cluster: {}, url: {}, collector: {}{})".format(
-            self.cluster, self.url, self.collector.__name__, f', name: {self.name}' if self.name else '')
+            self.cluster, self.urls, self.collector.__name__, f', name: {self.name}' if self.name else '')
 
 
 class Exporter:
@@ -122,12 +123,13 @@ class Exporter:
                 jmx = cfg.get('jmx', [])
                 for js in jmx:
                     try:
-                        service = self._build_service_from_config(js)
-                        self.sevices.append(service)
+                        services = self._build_service_from_config(js)
+                        self.sevices.extend(services)
                     except:
                         logger.warning(f'Error when parse jmx_service: {js}')
                         traceback.print_exc()
         else:
+            logger.info("Config file: {} doesn't existed. Ignore".format(self.config))
             self.address = args.address or ExporterEnv.EXPORTER_ADDRESS
             self.port = int(args.port or ExporterEnv.EXPORTER_PORT)
             self.path = args.path or ExporterEnv.EXPORTER_PATH
@@ -197,20 +199,32 @@ class Exporter:
             #     self.sevices.append(self._build_service(
             #         cluster_name, hregion_jmx, HBaseRegionServerMetricCollector))
 
-    def _build_service_from_config(self, js: Dict) -> Service:
-        service = Service(
-            cluster=js.get('cluster', EXPORTER_CLUSTER_NAME_DEFAULT),
-            url=js['url'],
-            collector=self.COLLECTOR_MAPPING[js['component'].lower()][js['service'].lower()],
-            name=js.get('name', None)
-        )
-        logger.info("Added service: {}".format(service))
-        return service
+    def _build_service_from_config(self, js: Dict) -> List[Service]:
+        if "component" not in js or "services" not in js:
+            logger.error("component and services field must provided")
+            return
 
-    def _build_service(self, cluster_name: str, url: str, collector: Callable) -> Service:
+        cluster=js.get("cluster", EXPORTER_CLUSTER_NAME_DEFAULT)
+        component_name = js.get("component", None)
+        services= []
+        for service_name, urls in js["services"].items():
+            collector = self.COLLECTOR_MAPPING.get(component_name, {}).get(service_name, None)
+            if collector:
+                service = Service(
+                    cluster=cluster,
+                    urls=urls,
+                    collector=collector
+                )
+                services.append(service)
+                logger.info("Added service: {}".format(service))
+            else:
+                logger.warning("Can't mapping collector with component/service: {}/{}".format(component_name, service_name))
+        return services
+
+    def _build_service(self, cluster_name: str, urls: Union[str, List[str]], collector: Callable) -> Service:
         service = Service(
             cluster=cluster_name,
-            url=url,
+            urls=urls,
             collector=collector,
         )
         logger.info("Added service: {}".format(service))

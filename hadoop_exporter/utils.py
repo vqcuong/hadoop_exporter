@@ -113,7 +113,7 @@ def parse_args():
         '-cfg',
         required=False,
         dest='config',
-        help='Exporter config file (defautl: None)',
+        help='Exporter config file (defautl: /exporter/config.yaml)',
         default=None
     )
     parser.add_argument(
@@ -127,70 +127,70 @@ def parse_args():
         '-nn',
         required=False,
         dest='namenode_jmx',
-        help='Hadoop hdfs metrics URL. (example "http://localhost:9870/jmx")',
+        help='List of HDFS namenode JMX url. (example "http://localhost:9870/jmx")',
         default=None
     )
     parser.add_argument(
         '-dn',
         required=False,
         dest='datanode_jmx',
-        help='Hadoop datanode metrics URL. (example "http://localhost:9864/jmx")',
+        help='List of HDFS datanode JMX url. (example "http://localhost:9864/jmx")',
         default=None
     )
     parser.add_argument(
         '-jn',
         required=False,
         dest='journalnode_jmx',
-        help='Hadoop journalnode metrics URL. (example "http://localhost:8480/jmx")',
+        help='List of HDFS journalnode JMX url. (example "http://localhost:8480/jmx")',
         default=None
     )
     parser.add_argument(
         '-rm',
         required=False,
         dest='resourcemanager_jmx',
-        help='Hadoop resourcemanager metrics URL. (example "http://localhost:8088/jmx")',
+        help='List of YARN resourcemanager JMX url. (example "http://localhost:8088/jmx")',
         default=None
     )
     parser.add_argument(
         '-nm',
         required=False,
         dest='nodemanager_jmx',
-        help='Hadoop nodemanager metrics URL. (example "http://localhost:8042/jmx")',
+        help='List of YARN nodemanager JMX url. (example "http://localhost:8042/jmx")',
         default=None
     )
     parser.add_argument(
         '-mrjh',
         required=False,
         dest='mapred_jobhistory_jmx',
-        help='Hadoop mapred history metrics URL. (example "http://localhost:19888/jmx")',
+        help='List of Mapreduce jobhistory JMX url. (example "http://localhost:19888/jmx")',
         default=None
     )
     parser.add_argument(
         '-hm',
         required=False,
         dest='hmaster_jmx',
-        help='HBase masterserver metrics URL. (example "http://localhost:16010/jmx")',
+        help='List of HBase master JMX url. (example "http://localhost:16010/jmx")',
         default=None
     )
     parser.add_argument(
         '-hr',
         required=False,
         dest='hregion_jmx',
-        help='HBase regionserver metrics URL. (example "http://localhost:16030/jmx")',
+        help='List of HBase regionserver JMX url. (example "http://localhost:16030/jmx")',
         default=None
     )
     parser.add_argument(
         '-hs2',
         required=False,
         dest='hiveserver2_jmx',
-        help='hive metrics URL. (example "http://localhost:10002/jmx")',
+        help='List of HiveServer2 JMX url. (example "http://localhost:10002/jmx")',
         default=None
     )
     parser.add_argument(
         '-hllap',
         required=False,
         dest='hivellap_jmx',
-        help='Hadoop llap metrics URL. (example "http://localhost:15002/jmx")',
+        help='List of Hive LLAP JMX url. (example "http://localhost:15002/jmx")',
         default=None
     )
     parser.add_argument(
@@ -234,7 +234,7 @@ def parse_args():
         dest='period',
         required=False,
         type=int,
-        help='Period (seconds) to consume jmx service. (default: 30)',
+        help='Period (seconds) to consume jmx service. (default: 10)',
         default=None
     )
     return parser.parse_args()
