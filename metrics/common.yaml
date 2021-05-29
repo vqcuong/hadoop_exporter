@@ -1,0 +1,47 @@
+rules:
+  java.lang:type=(Threading):
+    - pattern: ^(CurrentThreadAllocatedBytes|.+Count|.+Time)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+      help: "$1 metrics"
+
+  java.lang:type=(OperatingSystem):
+    - pattern: (.+(Count|Size|Load|Time|Average|Processors)$)
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+      help: "$1 metrics"
+
+  Hadoop:service=.+,name=(JvmMetrics):
+    - pattern: ^(Mem|Gc|Threads)(.+)
+      type: GAUSE
+      name: $1_$2
+      labels:
+        type: $3
+      help: "$1 metrics"
+  
+  Hadoop:service=.+,name=(RpcActivity)ForPort(\d+):
+    - pattern: (.+)(NumOps|AvgTime)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        port: $2
+        type: $3
+
+    - pattern: ^(RpcClientBackoff|RpcSlowCalls|CallQueueLength|.+Bytes|.+Connections|.+Failures|.+Successes)$
+      type: GAUSE
+      name: $1
+      labels:
+        port: $2
+        type: $3
+
+  Hadoop:service=.+,name=(RpcDetailedActivity)ForPort(\d+):
+    - pattern: (.+)(NumOps|AvgTime)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        port: $2
+        type: $3

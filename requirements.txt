@@ -1,0 +1,4 @@
+requests==2.23.0
+prometheus-client==0.9.0
+python-consul==1.1.0
+pyyaml==5.3.1

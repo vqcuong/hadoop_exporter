@@ -1,0 +1,14 @@
+.vscode
+.idea
+
+*/__pycache__
+*.egg-info
+*.egg/
+*.pyc
+*.swp
+
+test
+build.sh
+
+.git
+.gitignore

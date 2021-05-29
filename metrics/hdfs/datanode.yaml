@@ -1,0 +1,31 @@
+# Reference: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Metrics.html
+lowercaseOutputName: true
+lowercaseOutputLabelNames: false
+rules:
+  Hadoop:service=DataNode,name=(DataNodeVolume)-(.+):
+    - pattern: (.+)(NumOps|AvgTime)
+      type: GAUSE
+      name: $1_$4
+      labels:
+        datadir: $2
+        type: $3
+    - pattern: ^(Total)(.+)
+      type: GAUSE
+      name: $1_$3
+      labels:
+        datadir: $2
+        type: $4
+
+  Hadoop:service=DataNode,name=(FSDatasetState)$:
+    - pattern: ^((?!tag|modelerType|name).*)
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+
+  Hadoop:service=DataNode,name=(DataNodeActivity).*:
+    - pattern: ^((?!tag|modelerType|name).*)
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2

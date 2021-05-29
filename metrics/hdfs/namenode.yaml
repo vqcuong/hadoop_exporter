@@ -1,0 +1,69 @@
+# Reference: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Metrics.html
+lowercaseOutputName: true
+lowercaseOutputLabelNames: false
+rules:
+  Hadoop:service=NameNode,name=(NameNodeInfo)$:
+    - pattern: ^(Total|Used|Free|NonDfsUsedSpace|Percent.+|Cache.+|CorruptFilesCount|Threads)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+
+  Hadoop:service=NameNode,name=(FSNamesystem)$:
+    - pattern: ^(Capacity)(.+)
+      type: GAUSE
+      name: $1_$2
+      labels:
+        type: $3
+
+    - pattern: (.+)(Blocks)$
+      type: GAUSE
+      name: $1_$3
+      labels:
+        type: $2
+
+    - pattern: ^(TotalLoad|BlocksTotal|FilesTotal|TotalLoad|TotalSyncCount|NumActiveClients|NumFilesUnderConstruction)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+
+    - pattern: .*(HAState)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+      mapping: hadoop_exporter.mapping.hastate
+
+  Hadoop:service=NameNode,name=(FSNamesystemState)$:
+    - pattern: ^(Capacity)(.+)
+      type: GAUSE
+      name: $1_$2
+      labels:
+        type: $3
+
+    - pattern: ^(Num)(.+)(DataNodes)$
+      type: GAUSE
+      name: $1_$2_$4
+      labels:
+        type: $3
+
+    - pattern: ^(FilesTotal|BlocksTotal|PendingDeletionBlocks|VolumeFailuresTotal|EstimatedCapacityLostTotal|TotalSyncCount|TotalSyncTimes)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+
+    - pattern: (FSState)
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+      mapping: hadoop_exporter.mapping.fsstate
+    
+  Hadoop:service=NameNode,name=(NameNodeActivity)$:
+    - pattern: ^((?!tag|modelerType|name).*)
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2

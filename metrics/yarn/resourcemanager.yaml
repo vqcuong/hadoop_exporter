@@ -1,0 +1,124 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: false
+rules:
+  Hadoop:service=ResourceManager,name=(QueueMetrics),q0=(\w+)$:
+    - pattern: ^(running)_(\d+)$
+      type: GAUSE
+      name: $1_$3
+      labels:
+        queue0: $2
+        type: $4
+      help: 'Current number of running applications based on type. See https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-common/Metrics.html#QueueMetrics to more details'
+
+    - pattern: (.+)(Containers)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        queue0: $2
+        type: $3
+      help: 'Current number of containers are on the type'
+
+    - pattern: (.+)(VCores)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        queue0: $2
+        type: $3
+      help: 'Current cpu resource in virtual cores of type'
+
+    - pattern: (.+)(MB)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        queue0: $2
+        type: $3
+      help: 'Current memory resource in MB of type'
+
+    - pattern: ^(Apps)(.+)
+      type: GAUSE
+      name: $1_$3
+      labels:
+        queue0: $2
+        type: $4
+      help: 'Current number of applications are on the type'
+
+    - pattern: ^((?!tag|modelerType|name).*)
+      type: GAUSE
+      name: $1
+      labels:
+        queue0: $2
+        type: $3
+
+  Hadoop:service=ResourceManager,name=(QueueMetrics),q0=(\w+),q1=(\w+)$:
+    - pattern: ^(running)_(\d+)$
+      type: GAUSE
+      name: $1_$4
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $5
+      help: 'Current number of running applications based on type. See https://hadoop.apache.org/docs/r3.3.0/hadoop-project-dist/hadoop-common/Metrics.html#QueueMetrics to more details'
+
+    - pattern: (.+)(Containers)$
+      type: GAUSE
+      name: $1_$5
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $4
+      help: 'Current number of containers are on the type'
+
+    - pattern: (.+)(VCores)$
+      type: GAUSE
+      name: $1_$5
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $4
+      help: 'Current cpu resource in virtual cores of type'
+
+    - pattern: (.+)(MB)$
+      type: GAUSE
+      name: $1_$5
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $4
+      help: 'Current memory resource in MB of type'
+
+    - pattern: ^(Apps)(.+)
+      type: GAUSE
+      name: $1_$4
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $5
+      help: 'Current number of applications are on the type'
+
+    - pattern: ^((?!tag|modelerType|name).*)
+      type: GAUSE
+      name: $1
+      labels:
+        queue0: $2
+        queue1: $3
+        type: $4
+
+  Hadoop:service=ResourceManager,name=(CapacitySchedulerMetrics)$:
+    - pattern: (.+)(NumOps|AvgTime)$
+      type: GAUSE
+      name: $1_$3
+      labels:
+        type: $2
+
+  Hadoop:service=ResourceManager,name=(ClusterMetrics)$:
+    - pattern: ^(Num)(.+)(NMs)$
+      type: GAUSE
+      name: $1_$2_$4
+      labels:
+        type: $3
+
+    - pattern: (.+)(NumOps|AvgTime)$
+      type: GAUSE
+      name: $1_$3
+      labels:
+        type: $2

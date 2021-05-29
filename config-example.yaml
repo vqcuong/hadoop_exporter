@@ -1,0 +1,16 @@
+# exporter server config
+server:
+  address: 127.0.0.1 # address to run exporter
+  port: 9123 # port to listen
+
+# list of jmx service to scape metrics
+jmx:
+  - cluster: hadoop_cluster
+    component: hdfs
+    service: namenode
+    url: http://localhost:9870/jmx
+
+  - cluster: hadoop_cluster
+    component: yarn
+    service: resourcemanager
+    url: http://localhost:8088/jmx

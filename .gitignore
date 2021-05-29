@@ -1,0 +1,7 @@
+.vscode
+.idea
+local
+build
+
+__pycache__
+*.pyc
