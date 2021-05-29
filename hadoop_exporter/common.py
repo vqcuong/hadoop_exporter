@@ -7,7 +7,6 @@ import re
 import traceback
 from typing import Any, List, Dict, Optional
 from prometheus_client.core import GaugeMetricFamily
-from prometheus_client.metrics_core import Metric
 from hadoop_exporter import utils
 
 EXPORTER_METRICS_DIR = os.environ.get('EXPORTER_METRICS_DIR', 'metrics')
