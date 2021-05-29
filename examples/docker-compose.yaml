@@ -4,6 +4,8 @@ services:
   hadoop_exporter:
     image: vqcuong96/hadoop_exporter
     container_name: hadoop_exporter
+    ports:
+      - 9123:9123
     restart: always
     volumes:
       - ./config-example.yaml:/exporter/config.yaml

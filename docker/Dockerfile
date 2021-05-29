@@ -30,5 +30,5 @@ RUN set -ex \
     && chmod +x /entrypoint.sh /service.py
 
 ENV PYTHONPATH=${PYTHONPATH}:${EXPORTER_HOME}
-EXPOSE 9123
+EXPOSE ${EXPORTER_PORT}
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
