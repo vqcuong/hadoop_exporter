@@ -124,7 +124,8 @@ class Exporter:
                 for js in jmx:
                     try:
                         services = self._build_service_from_config(js)
-                        self.sevices.extend(services)
+                        if services:
+                            self.sevices.extend(services)
                     except:
                         logger.warning(f'Error when parse jmx_service: {js}')
                         traceback.print_exc()
@@ -202,7 +203,7 @@ class Exporter:
     def _build_service_from_config(self, js: Dict) -> List[Service]:
         if "component" not in js or "services" not in js:
             logger.error("component and services field must provided")
-            return
+            return None
 
         cluster=js.get("cluster", EXPORTER_CLUSTER_NAME_DEFAULT)
         component_name = js.get("component", None)
