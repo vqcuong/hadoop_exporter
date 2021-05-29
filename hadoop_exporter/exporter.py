@@ -201,7 +201,7 @@ class Exporter:
         service = Service(
             cluster=js.get('cluster', EXPORTER_CLUSTER_NAME_DEFAULT),
             url=js['url'],
-            collector=self.COLLECTOR_MAPPING[js['component']][js['service']],
+            collector=self.COLLECTOR_MAPPING[js['component'].lower()][js['service'].lower()],
             name=js.get('name', None)
         )
         logger.info("Added service: {}".format(service))
