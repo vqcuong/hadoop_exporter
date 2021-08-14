@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from hadoop_exporter.exporter import Exporter
-from hadoop_exporter import utils
-
 
 def main():
     exporter = Exporter()
