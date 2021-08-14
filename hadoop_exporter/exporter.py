@@ -8,17 +8,19 @@ from prometheus_client import start_http_server
 import yaml
 from hadoop_exporter import utils
 from hadoop_exporter.common import MetricCollector
-from hadoop_exporter import \
-    HDFSNameNodeMetricCollector, \
-    HDFSDataNodeMetricCollector, \
-    YARNResourceManagerMetricCollector, \
-    YARNNodeManagerMetricCollector
-    # HDFSJournalNodeMetricCollector, \
+from hadoop_exporter import (
+    HDFSNameNodeMetricCollector,
+    HDFSDataNodeMetricCollector,
+    HDFSJournalNodeMetricCollector,
+    YARNResourceManagerMetricCollector,
+    YARNNodeManagerMetricCollector,
+    HiveServer2MetricCollector
     # MapredJobHistoryMetricCollector, \
     # HBaseMasterMetricCollector, \
     # HBaseRegionServerMetricCollector, \
     # HiveServer2MetricCollector, \
     # HiveLlapDaemonMetricCollector
+)
 
 logger = utils.get_logger(__name__)
 
@@ -26,8 +28,9 @@ EXPORTER_CLUSTER_NAME_DEFAULT = 'hadoop_cluster'
 EXPORTER_ADDRESS_DEFAULT = '0.0.0.0'
 EXPORTER_PORT_DEFAULT = 9123
 EXPORTER_PATH_DEFAULT = '/metrics'
-EXPORTER_PERIOD_DEFAULT=10
+EXPORTER_PERIOD_DEFAULT=30
 EXPORTER_CONFIG_DEFAULT='/exporter/config.yaml'
+EXPORTER_LOG_LEVEL_DEFAULT='info'
 
 
 class ExporterEnv:
@@ -55,6 +58,7 @@ class ExporterEnv:
     EXPORTER_PORT = os.environ.get('EXPORTER_PORT', EXPORTER_PORT_DEFAULT)
     EXPORTER_PATH = os.environ.get('EXPORTER_PATH', EXPORTER_PATH_DEFAULT)
     EXPORTER_PERIOD = os.environ.get('EXPORTER_PERIOD', EXPORTER_PERIOD_DEFAULT)
+    EXPORTER_LOG_LEVEL = os.environ.get('EXPORTER_LOG_LEVEL', EXPORTER_LOG_LEVEL_DEFAULT)
 
 
 class Service:
@@ -83,16 +87,16 @@ class Exporter:
         'hdfs': {
             'namenode': HDFSNameNodeMetricCollector,
             'datanode': HDFSDataNodeMetricCollector,
-            # 'journalnode': HDFSJournalNodeMetricCollector,
+            'journalnode': HDFSJournalNodeMetricCollector,
         },
         'yarn': {
             'resourcemanager': YARNResourceManagerMetricCollector,
             'nodemanager': YARNNodeManagerMetricCollector,
         },
-        # 'hive': {
-        #     'hiveserver2': HiveServer2MetricCollector,
-        #     'llapdaemon': HiveLlapDaemonMetricCollector,
-        # },
+        'hive': {
+            'hiveserver2': HiveServer2MetricCollector,
+            # 'llapdaemon': HiveLlapDaemonMetricCollector,
+        },
         # 'hbase': {
         #     'master': HBaseMasterMetricCollector,
         #     'regionserver': HBaseRegionServerMetricCollector
@@ -101,6 +105,7 @@ class Exporter:
 
     def __init__(self) -> None:
         args = utils.parse_args()
+        self.log_level = (args.log_level or ExporterEnv.EXPORTER_LOG_LEVEL).upper()
         self.config = args.config or ExporterEnv.EXPORTER_CONFIG
         self.auto_discovery = False
         self.discovery_whitelist = []
@@ -175,9 +180,9 @@ class Exporter:
             if datanode_jmx and self._check_whitelist('dn'):
                 self.sevices.append(self._build_service(
                     cluster_name, datanode_jmx, HDFSDataNodeMetricCollector))
-            # if journalnode_jmx and self._check_whitelist('jn'):
-            #     self.sevices.append(self._build_service(
-            #         cluster_name, journalnode_jmx, HDFSJournalNodeMetricCollector))
+            if journalnode_jmx and self._check_whitelist('jn'):
+                self.sevices.append(self._build_service(
+                    cluster_name, journalnode_jmx, HDFSJournalNodeMetricCollector))
             if resourcemanager_jmx and self._check_whitelist('rm'):
                 self.sevices.append(self._build_service(
                     cluster_name, resourcemanager_jmx, YARNResourceManagerMetricCollector))
@@ -187,9 +192,9 @@ class Exporter:
             # if mapred_jobhistory_jmx and self._check_whitelist('mrjh'):
             #     self.sevices.append(self._build_service(
             #         cluster_name, mapred_jobhistory_jmx, MapredJobHistoryMetricCollector))
-            # if hiveserver2_jmx and self._check_whitelist('hs2'):
-            #     self.sevices.append(self._build_service(
-            #         cluster_name, hiveserver2_jmx, HiveServer2MetricCollector))
+            if hiveserver2_jmx and self._check_whitelist('hs2'):
+                self.sevices.append(self._build_service(
+                    cluster_name, hiveserver2_jmx, HiveServer2MetricCollector))
             # if hivellap_jmx and self._check_whitelist('hllap'):
             #     self.sevices.append(self._build_service(
             #         cluster_name, hivellap_jmx, HiveLlapDaemonMetricCollector))
@@ -245,16 +250,19 @@ class Exporter:
         start_http_server(self.port, addr=self.address)
         logger.info(
             f"Exporter start listening on http://{self.address}:{self.port}")
+        logger.info(f"Scraping metrics every {self.period}s ...")
+        logger.info(f"Set log level = {self.log_level}")
+        logger.setLevel(self.log_level)
 
     def register_prometheus(self):
-        self.logging_threshold = 30 #seconds
+        self.logging_threshold = 60 #seconds
         counter = self.logging_threshold
         try:
             while True:
                 for service in self.sevices:
                     service.register()
                 if counter >= self.logging_threshold:
-                    logger.info(f"Continue scaping metrics each {self.period}s...")
+                    logger.info(f"Continue scraping metrics every {self.period}s ...")
                     counter = 0
                 counter += 1
                 time.sleep(self.period)

@@ -1,0 +1,10 @@
+# Reference: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Metrics.html
+lowercaseOutputName: true
+lowercaseOutputLabel: false
+rules:
+  Hadoop:service=JournalNode,name=Journal-(.+):
+    - pattern: ^(Batches.+)
+      type: GAUSE
+      name: $2
+      labels:
+        dfs.nameservice: $1

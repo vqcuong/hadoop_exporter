@@ -1,0 +1,56 @@
+# Reference: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Metrics.html
+lowercaseOutputName: true
+lowercaseOutputLabel: false
+rules:
+  metrics:name=(active_calls.*)_hs2_(.+):
+    - pattern: Count
+      type: GAUSE
+      name: $1_$2_count
+  metrics:name=hs2_(completed_sql_operation_.+):
+    - pattern: Count
+      type: GAUSE
+      name: $1_count
+  metrics:name=hs2_(.+_sessions):
+    - pattern: Value
+      type: GAUSE
+      name: $1_count
+  metrics:name=hs2_(.+_queries):
+    - pattern: Count
+      type: GAUSE
+      name: $1_count
+    - pattern: ^(FifteenMinuteRate|OneMinuteRate|FiveMinuteRate|MeanRate|Min|Max|Mean)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+  metrics:name=hs2_(completed_.*operation_.+):
+    - pattern: Count
+      type: GAUSE
+      name: $1_count
+  metrics:name=(api)_hs2_(.+):
+    - pattern: Count
+      type: GAUSE
+      name: $1_$2_count
+    - pattern: ^(FifteenMinuteRate|OneMinuteRate|FiveMinuteRate|MeanRate|Min|Max|Mean)$
+      type: GAUSE
+      name: $1_$2
+      labels:
+        type: $3
+  metrics:name=memory.heap.(.+):
+    - pattern: Value
+      type: GAUSE
+      name: memory_heap_$1
+      labels:
+        type: $1
+  metrics:name=memory.total.(.+):
+    - pattern: Value
+      type: GAUSE
+      name: memory_total_$1
+  metrics:name=(exec_async_.+_size):
+    - pattern: Value
+      type: GAUSE
+      name: $1
+  metrics:name=hs2_(sql_operation_active_user):
+    - pattern: Count
+      type: GAUSE
+      name: $1

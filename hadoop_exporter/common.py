@@ -75,11 +75,6 @@ class MetricCollector(object):
         self._common_labels[url]["names"].append("cluster")
         self._common_labels[url]["values"].append(self._cluster)
 
-        bean = self._find_bean(beans, "Hadoop:service=.*,name=(JvmMetrics)$")
-        if bean:
-            self._common_labels[url]["names"].append("hostname")
-            self._common_labels[url]["values"].append(bean["tag.Hostname"])
-
 
     def _convert_metrics(self, beans: List[Dict], url: str):
         # loop for each group metric
@@ -101,7 +96,8 @@ class MetricCollector(object):
                                 group_pattern.rstrip("$"), metric_def["pattern"].lstrip("^")))
                             concat_str = "{}<>{}".format(bean["name"], metric_name)
                             sub_name = pattern.sub(metric_def["name"].replace("$", "\\"), concat_str)
-                            sub_label_names = [label for label in metric_def["labels"].keys()]
+                            sub_label_names = [label for label in metric_def["labels"].keys()] \
+                                if "labels" in metric_def else []
                             metric_identifier = '_'.join([sub_name] + sorted(sub_label_names)).lower()
                             if metric_identifier not in self._metrics[group_pattern]:
                                 name = "_".join([self._prefix, sub_name])
@@ -119,8 +115,9 @@ class MetricCollector(object):
                                     self._metrics[group_pattern][metric_identifier] = metric
 
                             if metric_identifier in self._metrics[group_pattern]:
-                                label_values = self._common_labels[url]["values"] + [pattern.sub(label.replace("$", "\\"), concat_str)
-                                    for label in metric_def["labels"].values()]
+                                sub_label_values = [pattern.sub(label.replace("$", "\\"), concat_str)
+                                    for label in metric_def["labels"].values()] if "labels" in metric_def else []
+                                label_values = self._common_labels[url]["values"] + sub_label_values
                                 resolved_value = self._resolve_value(value, metric_def.get("mapping", None))
                                 self._metrics[group_pattern][metric_identifier].add_metric(label_values, resolved_value)
                             break

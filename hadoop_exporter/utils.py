@@ -13,7 +13,7 @@ import argparse
 EXPORTER_LOGS_DIR = os.environ.get('EXPORTER_LOGS_DIR', '/tmp/exporter')
 
 
-def get_logger(name, log_file="hadoop_exporter.log") -> logging.Logger:
+def get_logger(name, log_file="hadoop_exporter.log", level: str = "INFO") -> logging.Logger:
     '''
     define a common logger template to record log.
     @param name log module or object name.
@@ -21,7 +21,7 @@ def get_logger(name, log_file="hadoop_exporter.log") -> logging.Logger:
     '''
 
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level.upper())
 
     if not os.path.exists(EXPORTER_LOGS_DIR):
         os.makedirs(EXPORTER_LOGS_DIR)
@@ -234,7 +234,14 @@ def parse_args():
         dest='period',
         required=False,
         type=int,
-        help='Period (seconds) to consume jmx service. (default: 10)',
+        help='Period (seconds) to consume jmx service. (default: 30)',
+        default=None
+    )
+    parser.add_argument(
+        '--log-level',
+        required=False,
+        dest='log_level',
+        help='Log level, include: all, debug, info, warn, error (default: info)',
         default=None
     )
     return parser.parse_args()

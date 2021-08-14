@@ -1,4 +1,6 @@
 from hadoop_exporter.hdfs.namenode import HDFSNameNodeMetricCollector
 from hadoop_exporter.hdfs.datanode import HDFSDataNodeMetricCollector
+from hadoop_exporter.hdfs.journalnode import HDFSJournalNodeMetricCollector
 from hadoop_exporter.yarn.resourcemanager import YARNResourceManagerMetricCollector
 from hadoop_exporter.yarn.nodemanager import YARNNodeManagerMetricCollector
+from hadoop_exporter.hive.server2 import HiveServer2MetricCollector

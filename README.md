@@ -19,7 +19,7 @@ usage: service.py [-h] [-cfg CONFIG] [-c CLUSTER_NAME] [-nn NAMENODE_JMX]
                   [-hr HREGION_JMX] [-hs2 HIVESERVER2_JMX]
                   [-hllap HIVELLAP_JMX] [-ad AUTO_DISCOVERY]
                   [-adw DISCOVERY_WHITELIST] [-addr ADDRESS] [-p PORT]
-                  [--path PATH] [--period PERIOD]
+                  [--path PATH] [--period PERIOD] [--log-level LOG_LEVEL]
 
 hadoop node exporter args, including url, metrics_path, address, port and
 cluster.
@@ -60,6 +60,7 @@ optional arguments:
   --path PATH           Path under which to expose metrics. (default
                         "/metrics")
   --period PERIOD       Period (seconds) to consume jmx service. (default: 10)
+  --log-level LOG_LEVEL Log level, include: all, debug, info, warn, error (default: info)
 ```
 
 You can use config file (yaml format) to replace commandline args. Example of config.yaml:
