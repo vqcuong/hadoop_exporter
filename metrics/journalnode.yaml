@@ -7,4 +7,4 @@ rules:
       type: GAUSE
       name: $2
       labels:
-        dfs.nameservice: $1
+        nameservice: $1
