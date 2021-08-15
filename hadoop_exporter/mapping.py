@@ -14,8 +14,8 @@ def hastate(value):
     elif value == "active":
         return 1.0
     elif value == "standby":
-        value = 2.0
+        return 2.0
     elif value == "stopping":
-        value = 3.0
+        return 3.0
     else:
-        value = 9999
+        return 9999
