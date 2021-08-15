@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from logging import Logger
 import os
 import re
 import traceback
+from logging import Logger
 from typing import Any, List, Dict, Optional, Union
 from prometheus_client.core import GaugeMetricFamily
 from hadoop_exporter import utils
@@ -32,9 +32,9 @@ class MetricCollector(object):
         self._component = component
         self._service = service
         self._urls = list(map(lambda url: url.rstrip('/'), urls.split(",") if isinstance(urls, str) else urls))
-        self._prefix = 'hadoop_{0}_{1}'.format(component, service)
+        self._prefix = f"hadoop_{component}_{service}"
 
-        cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, component, f"{service}.yaml"))
+        cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, f"{service}.yaml"))
         common_cfg = utils.read_yaml_file(os.path.join(EXPORTER_METRICS_DIR, 'common.yaml'))
 
         self._rules = cfg.get("rules", {}) if cfg is not None else {}
@@ -103,7 +103,7 @@ class MetricCollector(object):
                                 name = "_".join([self._prefix, sub_name])
                                 if self._lower_name: name = name.lower()
                                 label_names = self._common_labels[url]["names"] + sub_label_names
-                                if self._lower_label: label_names = [label.lower() for label in label_names]
+                                if self._lower_label: label_names = [l.lower() for l in label_names]
                                 docs = name if "help" not in metric_def \
                                     else pattern.sub(metric_def["help"].replace("$", "\\"), concat_str)
                                 try:
@@ -118,6 +118,7 @@ class MetricCollector(object):
                                 sub_label_values = [pattern.sub(label.replace("$", "\\"), concat_str)
                                     for label in metric_def["labels"].values()] if "labels" in metric_def else []
                                 label_values = self._common_labels[url]["values"] + sub_label_values
+                                if self._lower_label: label_values = [l.lower() for l in label_values]
                                 resolved_value = self._resolve_value(value, metric_def.get("mapping", None))
                                 self._metrics[group_pattern][metric_identifier].add_metric(label_values, resolved_value)
                             break

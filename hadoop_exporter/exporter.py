@@ -1,5 +1,4 @@
 import os
-from re import split
 import time
 import traceback
 from typing import Callable, Dict, List, Optional, Union
@@ -84,23 +83,15 @@ class Service:
 
 class Exporter:
     COLLECTOR_MAPPING = {
-        'hdfs': {
-            'namenode': HDFSNameNodeMetricCollector,
-            'datanode': HDFSDataNodeMetricCollector,
-            'journalnode': HDFSJournalNodeMetricCollector,
-        },
-        'yarn': {
-            'resourcemanager': YARNResourceManagerMetricCollector,
-            'nodemanager': YARNNodeManagerMetricCollector,
-        },
-        'hive': {
-            'hiveserver2': HiveServer2MetricCollector,
-            # 'llapdaemon': HiveLlapDaemonMetricCollector,
-        },
-        # 'hbase': {
-        #     'master': HBaseMasterMetricCollector,
-        #     'regionserver': HBaseRegionServerMetricCollector
-        # }
+        'namenode': HDFSNameNodeMetricCollector,
+        'datanode': HDFSDataNodeMetricCollector,
+        'journalnode': HDFSJournalNodeMetricCollector,
+        'resourcemanager': YARNResourceManagerMetricCollector,
+        'nodemanager': YARNNodeManagerMetricCollector,
+        'hiveserver2': HiveServer2MetricCollector,
+        # 'llapdaemon': HiveLlapDaemonMetricCollector,
+        # 'master': HBaseMasterMetricCollector,
+        # 'regionserver': HBaseRegionServerMetricCollector
     }
 
     def __init__(self) -> None:
@@ -206,15 +197,14 @@ class Exporter:
             #         cluster_name, hregion_jmx, HBaseRegionServerMetricCollector))
 
     def _build_service_from_config(self, js: Dict) -> List[Service]:
-        if "component" not in js or "services" not in js:
-            logger.error("component and services field must provided")
+        if "services" not in js:
+            logger.error("services field must provided")
             return None
 
         cluster=js.get("cluster", EXPORTER_CLUSTER_NAME_DEFAULT)
-        component_name = js.get("component", None)
         services= []
         for service_name, urls in js["services"].items():
-            collector = self.COLLECTOR_MAPPING.get(component_name, {}).get(service_name, None)
+            collector = self.COLLECTOR_MAPPING.get(service_name.lower(), None)
             if collector:
                 service = Service(
                     cluster=cluster,
@@ -224,7 +214,7 @@ class Exporter:
                 services.append(service)
                 logger.info("Added service: {}".format(service))
             else:
-                logger.warning("Can't mapping collector with component/service: {}/{}".format(component_name, service_name))
+                logger.warning("Unknown service name: {}. Ignored".format(service_name))
         return services
 
     def _build_service(self, cluster_name: str, urls: Union[str, List[str]], collector: Callable) -> Service:

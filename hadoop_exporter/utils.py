@@ -47,7 +47,7 @@ logger = get_logger(__name__)
 
 def get_metrics(url) -> List[Dict]:
     '''
-    :param url: The jmx url, e.g. http://host1:9870/jmx,http://host1:8088/jmx, http://host2:19888/jmx...
+    :param url: The jmx url, e.g. http://host1:9870/jmx, http://host1:8088/jmx, http://host2:19888/jmx...
     :return a dict of all metrics scraped in the jmx url.
     '''
     result = []

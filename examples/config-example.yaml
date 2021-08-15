@@ -5,8 +5,7 @@ server:
 
 # list of jmx service to scape metrics
 jmx:
-  - cluster: hdfs_cluster
-    component: hdfs
+  - cluster: hadoop_prod
     services:
       namenode:
         - http://nn1:9870/jmx
@@ -14,13 +13,30 @@ jmx:
         - http://dn1:9864/jmx
         - http://dn2:9864/jmx
         - http://dn3:9864/jmx
-
-  - cluster: yarn_cluster
-    component: yarn
-    services:
       resourcemanager:
-        - http://rm1:9870/jmx
+        - http://rm1:8088/jmx
       nodemanager:
-        - http://nm1:9864/jmx
-        - http://nm2:9864/jmx
-        - http://nm3:9864/jmx
+        - http://nm1:8042/jmx
+        - http://nm2:8042/jmx
+        - http://nm3:8042/jmx
+      hiveserver2:
+        - http://hs2:10002/jmx
+      hmaster:
+        - http://hmaster1:16010/jmx
+        - http://hmaster2:16010/jmx
+        - http://hmaster3:16010/jmx
+      hregionserver:
+        - http://hregion1:16030/jmx
+        - http://hregion2:16030/jmx
+        - http://hregion3:16030/jmx
+
+  - cluster: hadoop_dev
+    services:
+      namenode:
+        - http://dev:9870/jmx
+      datanode:
+        - http://dev:9864/jmx
+      resourcemanager:
+        - http://dev:8088/jmx
+      nodemanager:
+        - http://dev:8042/jmx
