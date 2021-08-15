@@ -21,8 +21,14 @@ rules:
       name: $1_$3
       labels:
         type: $2
+    
+    - pattern: ^(Num)(.+)(DataNodes)$
+      type: GAUSE
+      name: $1_$2_$4
+      labels:
+        type: $3
 
-    - pattern: ^(TotalLoad|BlocksTotal|FilesTotal|TotalLoad|TotalSyncCount|NumActiveClients|NumFilesUnderConstruction)$
+    - pattern: ^(TotalLoad|BlocksTotal|FilesTotal|TotalSyncCount|NumActiveClients|NumFilesUnderConstruction|NumStaleStorages)$
       type: GAUSE
       name: $1
       labels:
@@ -48,7 +54,7 @@ rules:
       labels:
         type: $3
 
-    - pattern: ^(FilesTotal|BlocksTotal|PendingDeletionBlocks|VolumeFailuresTotal|EstimatedCapacityLostTotal|TotalSyncCount|TotalSyncTimes)$
+    - pattern: ^(FilesTotal|BlocksTotal|PendingDeletionBlocks|VolumeFailuresTotal|EstimatedCapacityLostTotal|TotalSyncCount)$
       type: GAUSE
       name: $1
       labels:
