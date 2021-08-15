@@ -8,7 +8,7 @@ from hadoop_exporter.common import MetricCollector
 
 class HiveServer2MetricCollector(MetricCollector):
     COMPONENT = "hive"
-    SERVICE = "server2"
+    SERVICE = "hiveserver2"
 
     def __init__(self, cluster, urls: Union[str, List[str]]):
         logger = utils.get_logger(__name__, log_file=f"{self.COMPONENT}_{self.SERVICE}.log")
