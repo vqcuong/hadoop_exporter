@@ -122,3 +122,9 @@ rules:
       name: $1_$3
       labels:
         type: $2
+
+  Hadoop:service=ResourceManager,name=RMInfo:
+    - pattern: (State)
+      type: GAUSE
+      name: $1
+      mapping: hadoop_exporter.mapping.rmstate

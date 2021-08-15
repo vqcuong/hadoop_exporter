@@ -19,3 +19,6 @@ def hastate(value):
         return 3.0
     else:
         return 9999
+
+def rmstate(value):
+    return hastate(value)

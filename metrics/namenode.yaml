@@ -36,9 +36,7 @@ rules:
 
     - pattern: .*(HAState)$
       type: GAUSE
-      name: $1
-      labels:
-        type: $2
+      name: $2
       mapping: hadoop_exporter.mapping.hastate
 
   Hadoop:service=NameNode,name=(FSNamesystemState)$:
@@ -62,11 +60,9 @@ rules:
 
     - pattern: (FSState)
       type: GAUSE
-      name: $1
-      labels:
-        type: $2
+      name: $2
       mapping: hadoop_exporter.mapping.fsstate
-    
+
   Hadoop:service=NameNode,name=(NameNodeActivity)$:
     - pattern: ^((?!tag|modelerType|name).*)
       type: GAUSE

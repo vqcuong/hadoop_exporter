@@ -8,7 +8,7 @@ rules:
       labels:
         type: $3
       help: "Total number of containers on the type"
-    - pattern: ^((?!tag|modelerType|name).*)
+    - pattern: ^((?!tag|modelerType|name|Containers).*)
       type: GAUSE
       name: $1
       labels:
@@ -20,7 +20,7 @@ rules:
       name: $1_$2
       labels:
         type: $3
-    - pattern: ^((?!tag|modelerType|name).*)
+    - pattern: ^(numRegisteredConnections|numCaughtExceptions|registeredExecutorsSize|numActiveConnections)$
       type: GAUSE
       name: $1
       labels:
