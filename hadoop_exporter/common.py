@@ -82,7 +82,7 @@ class MetricCollector(object):
             for group_pattern in self._rules:
                 if not re.compile(group_pattern).match(bean["name"]):
                     continue
-                for metric_name, value in bean.items():
+                for metric_name, metric_value in bean.items():
                     if metric_name in self.NON_METRIC_NAMES:
                         continue
                     # loop for each metric defined in each group
@@ -119,8 +119,12 @@ class MetricCollector(object):
                                     for label in metric_def["labels"].values()] if "labels" in metric_def else []
                                 label_values = self._common_labels[url]["values"] + sub_label_values
                                 if self._lower_label: label_values = [l.lower() for l in label_values]
-                                resolved_value = self._resolve_value(value, metric_def.get("mapping", None))
-                                self._metrics[group_pattern][metric_identifier].add_metric(label_values, resolved_value)
+                                try:
+                                    resolved_value = self._resolve_value(metric_value, metric_def.get("mapping", None))
+                                except:
+                                    self._logger.warn("Unparseble metric: {} - {} = {}".format(bean["name"], metric_name, metric_value))
+                                else:
+                                    self._metrics[group_pattern][metric_identifier].add_metric(label_values, resolved_value)
                             break
 
 
