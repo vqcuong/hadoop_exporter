@@ -3,7 +3,7 @@ lowercaseOutputName: true
 lowercaseOutputLabel: false
 rules:
   Hadoop:service=JournalNode,name=Journal-(.+):
-    - pattern: ^(Syncs\d+s)_(NumOps)$
+    - pattern: ^(Syncs\d+s)(NumOps)$
       type: GAUSE
       name: $2_$3
       labels:
