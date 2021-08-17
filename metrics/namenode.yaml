@@ -16,7 +16,7 @@ rules:
       labels:
         type: $3
 
-    - pattern: (.+)(Blocks)$
+    - pattern: ^(\w+)(Blocks)$
       type: GAUSE
       name: $1_$3
       labels:
@@ -29,6 +29,12 @@ rules:
         type: $3
 
     - pattern: ^(TotalLoad|BlocksTotal|FilesTotal|TotalSyncCount|NumActiveClients|NumFilesUnderConstruction|NumStaleStorages)$
+      type: GAUSE
+      name: $1
+      labels:
+        type: $2
+    
+    - pattern: ^(Transactions\w+|Last\w+)$
       type: GAUSE
       name: $1
       labels:
@@ -52,7 +58,13 @@ rules:
       labels:
         type: $3
 
-    - pattern: ^(FilesTotal|BlocksTotal|PendingDeletionBlocks|VolumeFailuresTotal|EstimatedCapacityLostTotal|TotalSyncCount)$
+    - pattern: ^(\w+)(Blocks)$
+      type: GAUSE
+      name: $1_$3
+      labels:
+        type: $2
+
+    - pattern: ^(TotalLoad|BlocksTotal|FilesTotal|TotalSyncCount|VolumeFailuresTotal|EstimatedCapacityLostTotal)$
       type: GAUSE
       name: $1
       labels:
