@@ -3,8 +3,20 @@ lowercaseOutputName: true
 lowercaseOutputLabel: false
 rules:
   Hadoop:service=JournalNode,name=Journal-(.+):
-    - pattern: ^(Batches.+)
+    - pattern: ^(Syncs\d+s)_(NumOps)$
       type: GAUSE
-      name: $2
+      name: $2_$3
       labels:
         nameservice: $1
+    - pattern: ^(Syncs\d+s)(\d+th)Percentile(Latency)Micros$
+      type: GAUSE
+      name: $2_$4_micros
+      labels:
+        nameservice: $1
+        percentile: $3
+    - pattern: ^((?!tag|modelerType|name|Syncs).*)
+      type: GAUSE
+      name: metrics
+      labels:
+        nameservice: $1
+        type: $2
