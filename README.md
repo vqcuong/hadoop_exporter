@@ -21,9 +21,6 @@ usage: service.py [-h] [-cfg CONFIG] [-c CLUSTER_NAME] [-nn NAMENODE_JMX]
                   [-adw DISCOVERY_WHITELIST] [-addr ADDRESS] [-p PORT]
                   [--path PATH] [--period PERIOD] [--log-level LOG_LEVEL]
 
-hadoop node exporter args, including url, metrics_path, address, port and
-cluster.
-
 optional arguments:
   -h, --help            show this help message and exit
   -cfg CONFIG           Exporter config file (defautl: /exporter/config.yaml)
@@ -109,6 +106,10 @@ jmx:
 ```
 
 Tested on Apache Hadoop 2.7.3, 3.3.0
+
+## Grafana Monitoring
+
+HDFS and YARN dashboard defintion are placed in `dashboard` folder. You can import it directly on grafana
 
 ## Docker deployment
 
