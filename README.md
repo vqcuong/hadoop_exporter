@@ -108,7 +108,7 @@ jmx:
 Tested on Apache Hadoop 2.7.3, 3.3.0, 3.3.1, 3.3.2
 
 ## Grafana Monitoring
-There are [HDFS](./dashboards/hdfs.json) and [YARN](./dashboards/yarn.json) dashboard defination prepared by me. You can import it directly on grafana.
+There are [HDFS](./dashboards/hdfs.json) and [YARN](./dashboards/yarn.json) dashboard definition prepared by me. You can import it directly on grafana.
 
 ## Docker deployment
 
