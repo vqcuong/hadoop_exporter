@@ -23,7 +23,7 @@ class MetricCollector(object):
         @param cluster: Cluster name, registered in the config file or ran in the command-line.
         @param urls: List of JMX url of each unique serivce corresponding to each component 
                     e.g. hdfs namenode metrics can be scraped in list: [http://namenode1:9870/jmx. http://namenode2:9870/jmx]
-        @param component: Component name. e.g. "hdfs", "resourcemanager"
+        @param component: Component name. e.g. "hdfs", "yarn"
         @param service: Service name. e.g. "namenode", "datanode", "resourcemanager", "nodemanager"
         '''
 
