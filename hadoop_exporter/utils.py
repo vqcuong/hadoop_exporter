@@ -113,7 +113,7 @@ def parse_args():
         '-cfg',
         required=False,
         dest='config',
-        help='Exporter config file (defautl: /exporter/config.yaml)',
+        help='Exporter config file (default: /exporter/config.yaml)',
         default=None
     )
     parser.add_argument(
