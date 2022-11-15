@@ -204,7 +204,7 @@ def parse_args():
         '-adw',
         required=False,
         dest='discovery_whitelist',
-        help='Enable auto discovery if set true else false. (example "--auto true") (default: false)',
+        help='List of shortnames of services (namenode: nn, datanode: dn, ...) that should be enable to auto discovery',
         default=None
     )
     parser.add_argument(
