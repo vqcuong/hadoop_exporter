@@ -197,7 +197,7 @@ def parse_args():
         '-ad',
         required=False,
         dest='auto_discovery',
-        help='Enable auto discovery if set true else false. (example "--auto true") (default: false)',
+        help='Enable auto discovery if set true else false. (example "--auto_discovery true") (default: false)',
         default=None
     )
     parser.add_argument(
