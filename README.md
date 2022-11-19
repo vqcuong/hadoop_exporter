@@ -1,4 +1,4 @@
-# Hadoop Exporter for Prometheus
+# Hadoop Prometheus Exporter 
 
 ## How it works
 - Consume metrics from JMX http, convert and export hadoop metrics via HTTP for Prometheus consumption.
