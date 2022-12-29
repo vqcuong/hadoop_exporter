@@ -44,6 +44,7 @@ rules:
       type: GAUSE
       name: $2
       mapping: hadoop_exporter.mapping.hastate
+      help: 'the high-available state of namenodes: 0.0 => initializing, 1.0 => active, 2.0 => standby, 3.0 => stopping, 9999 => others'
 
   Hadoop:service=NameNode,name=(FSNamesystemState)$:
     - pattern: ^(Capacity)(.+)
@@ -74,6 +75,7 @@ rules:
       type: GAUSE
       name: $2
       mapping: hadoop_exporter.mapping.fsstate
+      help: 'the fs state of namenode: 0.0 => Operational, 1.0 => Safemode, 9999 => others'
 
   Hadoop:service=NameNode,name=(NameNodeActivity)$:
     - pattern: ^((?!tag|modelerType|name).*)

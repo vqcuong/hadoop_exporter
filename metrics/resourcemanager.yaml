@@ -116,6 +116,7 @@ rules:
       name: $1_$2_$4
       labels:
         type: $3
+      help: 'number of the node managers is in the particular states'
 
     - pattern: (.+)(NumOps|AvgTime)$
       type: GAUSE
@@ -128,3 +129,4 @@ rules:
       type: GAUSE
       name: $1
       mapping: hadoop_exporter.mapping.rmstate
+      help: 'the high-available state of resourcemanager: 0.0 => initializing, 1.0 => active, 2.0 => standby, 3.0 => stopping, 9999 => others'
