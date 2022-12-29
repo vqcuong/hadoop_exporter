@@ -133,11 +133,11 @@ docker run -d \
 
 To build your own images, run:
 ```
-./docker/build.sh [your_repo] [your_version_tag]
+./build.sh [your_repo] [your_version_tag]
 ```
 
 Example:
 ```
-./docker/build.sh mydockerhub/ latest 
+./build.sh mydockerhub/ latest 
 #your image will look like: mydockerhub/hadoop_exporter:latest
 ```
