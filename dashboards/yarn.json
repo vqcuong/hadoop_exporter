@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 5,
-  "iteration": 1672027084126,
+  "iteration": 1673497290099,
   "links": [],
   "panels": [
     {
@@ -6412,7 +6412,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -6450,10 +6449,10 @@
           "selected": true,
           "tags": [],
           "text": [
-            "All"
+            "root"
           ],
           "value": [
-            "$__all"
+            "root"
           ]
         },
         "datasource": null,
@@ -6495,12 +6494,11 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
-            "All"
+            "default"
           ],
           "value": [
-            "$__all"
+            "default"
           ]
         },
         "datasource": null,
