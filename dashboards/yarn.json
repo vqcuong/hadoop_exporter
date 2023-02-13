@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 5,
-  "iteration": 1673497290099,
+  "iteration": 1676281857891,
   "links": [],
   "panels": [
     {
@@ -1353,7 +1353,7 @@
               },
               {
                 "id": "unit",
-                "value": "mbytes"
+                "value": "short"
               }
             ]
           },
@@ -1428,7 +1428,12 @@
       "id": 25,
       "options": {
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Processors"
+          }
+        ]
       },
       "pluginVersion": "7.5.7",
       "targets": [
@@ -6546,5 +6551,5 @@
   "timezone": "",
   "title": "YARN Overview",
   "uid": "NB7h4c77z",
-  "version": 23
+  "version": 24
 }
